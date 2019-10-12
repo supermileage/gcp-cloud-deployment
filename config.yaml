@@ -1,0 +1,42 @@
+imports:
+  - path: python/cloudfunction.py
+    name: cloudfunction.py
+  - path: python/pubsub.py
+    name: pubsub.py
+  - path: jinja/storagebucket.jinja
+    name: storage.jinja
+  # Cloud function code
+  - path: function/index.js
+  - path: function/package.json
+
+resources:
+# Pub sub resource for our Particle board
+- name: particle-pubsub
+  type: pubsub.py
+  properties:
+    topic: particle-endpoint
+    accessControl:
+      - role: roles/pubsub.publisher
+        members:
+          - serviceAccount:particle-public@particle-public.iam.gserviceaccount.com
+# Storage bucket for our cloud function
+- name: code-storage
+  type: storage.jinja
+  properties:
+    region: us
+    storageClass: STANDARD
+# Cloud function that publishes our content
+- name: particle-cf-publish
+  type: cloudfunction.py
+  properties:
+    codeLocation: function/
+    codeBucket: $(ref.code-storage.bucket)
+    codeBucketObject: function.zip
+    location: us-central1
+    timeout: 60s
+    runtime: nodejs8
+    availableMemoryMb: 256
+    entryPoint: handler
+    eventTrigger:
+      resource: $(ref.particle-pubsub.topicName)
+      eventType: providers/cloud.pubsub/eventTypes/topic.publish

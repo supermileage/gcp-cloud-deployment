@@ -1,0 +1,17 @@
+{% set ID = env['name'] + env['deployment'] + env['project_number'] %}
+
+resources:
+- name: {{ ID }}
+  type: storage.v1.bucket
+  properties:
+    location: {{ properties['region'] }}
+    kind: storage#bucket
+    storageClass: {{ properties['storageClass'] }}
+    versioning:
+      enabled: false
+
+outputs:
+  - name: {{ ID }}-name
+    value: $(ref.{{ ID }}.name)
+    name: bucket
+    value: {{ ID }}

@@ -1,0 +1,14 @@
+{
+    "name": "particle-cf-bridge",
+    "version": "1.0.0",
+    "description": "A cloud function that bridges pubsub to datastore.",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "dependencies": {
+        "colors": "^1.1.2",
+        "@google-cloud/datastore": "^1.4.2",
+        "util": "^0.10.3"
+    }
+}
