@@ -18,15 +18,16 @@ exports.handler = (event, callback) => {
 
 storeEvent = message => {
     let key = datastore.key("ParticleEvent");
+    let particleEvent = createParticleEventObjectForStorage(message);
     datastore
         .save({
             key: key,
-            data: createParticleEventObjectForStorage(message)
+            data: particleEvent
         })
         .then(() => {
             console.log(
                 "Particle event stored in Datastore!\r\n",
-                createParticleEventObjectForStorage(message, true)
+                particleEvent
             );
         })
         .catch(err => {
@@ -34,12 +35,12 @@ storeEvent = message => {
         });
 };
 
-createParticleEventObjectForStorage = (message, log) => {
+createParticleEventObjectForStorage = (message) => {
     let obj = {
-        device_id: message.textPayload.attributes.device_id,
-        event: message.textPayload.attributes.event,
-        data: Buffer.from(message.textPayload.data, "base64").toString(),
-        published_at: message.textPayload.attributes.published_at
+        device_id: message.attributes.device_id,
+        event: message.attributes.event,
+        data: Buffer.from(message.data, "base64").toString(),
+        published_at: message.attributes.published_at
     };
     return obj;
 };
