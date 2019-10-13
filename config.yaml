@@ -30,7 +30,7 @@ resources:
   type: cloudfunction.py
   properties:
     codeLocation: function/
-    codeBucket: $(ref.code-storage.bucket)
+    codeBucket: code-storage
     codeBucketObject: function.zip
     location: us-central1
     timeout: 60s
