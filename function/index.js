@@ -5,15 +5,17 @@ const datastore = Datastore({
 });
 
 /**
- * Triggered from a message on a Cloud Pub/Sub topic.
+ * Background Cloud Function to be triggered by Pub/Sub.
+ * This function is exported by index.js, and executed when
+ * the trigger topic receives a message.
  *
- * @param {!Object} event Event payload and metadata.
- * @param {!Function} callback Callback function to signal completion.
+ * @param {object} pubSubEvent The event payload.
+ * @param {object} context The event metadata.
  */
-exports.handler = (event, callback) => {
-    console.log(event);
-    storeEvent(event);
-    callback();
+exports.handler = (pubSubEvent, context) => {
+    console.log(pubSubEvent);
+    console.log(context);
+    storeEvent(pubSubEvent);
 };
 
 storeEvent = message => {
