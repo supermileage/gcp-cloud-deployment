@@ -2,10 +2,11 @@
 # Note on order: the way Google orders and responds to
 # queries, we need equality first, then inequalities, then
 # finally whatever we want to sort in ASC/DESC
+
+# Each query needs its own index
 indexes:
 - kind: ParticleEvent
   properties:
     - name: event
     - name: recorded_at
-    - name: published_at
     - name: data
