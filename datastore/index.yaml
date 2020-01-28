@@ -6,5 +6,6 @@ indexes:
 - kind: ParticleEvent
   properties:
     - name: event
+    - name: recorded_at
     - name: published_at
     - name: data
