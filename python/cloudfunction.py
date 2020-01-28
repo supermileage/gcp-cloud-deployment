@@ -29,7 +29,10 @@
 
 import base64
 import hashlib
-from StringIO import StringIO
+try:
+    from StringIO import StringIO
+except ImportError:
+    from io import StringIO
 import zipfile
 
 
