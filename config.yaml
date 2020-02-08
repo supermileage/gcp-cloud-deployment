@@ -1,9 +1,9 @@
 imports:
-  - path: python/cloudfunction.py
+  - path: templates/cloudfunction.py
     name: cloudfunction.py
-  - path: python/pubsub.py
+  - path: templates/pubsub.py
     name: pubsub.py
-  - path: jinja/storagebucket.jinja
+  - path: templates/storagebucket.jinja
     name: storage.jinja
   # Cloud function code
   - path: function/index.js
