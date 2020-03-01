@@ -41,4 +41,25 @@ You'll have to manually delete what's in the bucket first, but then simply run `
 
 ## Addendum
 
-The cloud function will expect the data that comes from the particle to follow the format of `{epoch_timestamp}||{data}`, to record the time the data was taken.
+The cloud function will expect the data that comes from the particle to be a JSON string with a `time` field and `d` (data) array of objects with `t` (event type) and `d` (data) as fields.
+
+So for example, one push may look like:
+```json
+{
+    "time" : 1583051693,
+    "d" : [
+        {
+            "t" : "PROTO-SPARK",
+            "d" : 14.5
+        },
+        {
+            "t" : "PROTO-RPM",
+            "d" : 2343
+        },
+        {
+            "t" : "PROTO-Location",
+            "d" : "$GPRMC,123519,A,4807.038,N,01131.000,E,022.4,084.4,230394,003.1,W*6A"
+        }
+    ]
+}
+```

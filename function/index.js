@@ -15,35 +15,28 @@ const datastore = Datastore({
 exports.handler = (pubSubEvent, context) => {
   console.log(pubSubEvent);
   console.log(context);
-  storeEvent(pubSubEvent);
+  let json = JSON.parse(Buffer.from(pubSubEvent.data, "base64").toString());
+  json.d.forEach(e => {
+    storeEvent({
+      device_id: pubSubEvent.attributes.device_id,
+      event: e.t,
+      data: isNaN(e.d) ? e.d : Number(e.d).toString(),
+      published_at: pubSubEvent.attributes.published_at,
+      recorded_at: new Date(parseInt(json.time * 1000)).toISOString()
+    });
+  });
 };
 
-storeEvent = message => {
-  let key = datastore.key("ParticleEvent");
-  let particleEvent = createParticleEventObjectForStorage(message);
+storeEvent = event => {
   datastore
     .save({
-      key: key,
-      data: particleEvent
+      key: datastore.key("ParticleEvent"),
+      data: event
     })
     .then(() => {
-      console.log("Particle event stored in Datastore!\r\n", particleEvent);
+      console.log("Particle event stored in Datastore!\r\n", event);
     })
     .catch(err => {
       console.log("There was an error storing the event:", err);
     });
-};
-
-createParticleEventObjectForStorage = message => {
-  let msg = Buffer.from(message.data, "base64")
-    .toString()
-    .split("||");
-  let obj = {
-    device_id: message.attributes.device_id,
-    event: message.attributes.event,
-    data: msg[1],
-    published_at: message.attributes.published_at,
-    recorded_at: new Date(parseInt(`${msg[0]}000`)).toISOString()
-  };
-  return obj;
 };
