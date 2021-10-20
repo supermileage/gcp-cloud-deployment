@@ -54,24 +54,44 @@ def GenerateConfig(ctx):
         ctx.properties["bucketBase"] + ctx.env["deployment"] + ctx.env["project_number"]
     )
     source_archive_url = "gs://%s/%s" % (bucket, m.hexdigest() + ".zip")
-    cmd = "echo '%s' | base64 -d > /function/function.zip;" % (content.decode("utf-8"))
+    chunk_length = 3500
+    content_chunks = [
+        content[ii : ii + chunk_length] for ii in range(0, len(content), chunk_length)
+    ]
+    # use `>` first in case the file exists
+    cmds = [
+        "echo '%s' | base64 -d > /function/function.zip;"
+        % (content_chunks[0].decode("utf-8"))
+    ]
+    # then use `>>` to append
+    cmds += [
+        "echo '%s' | base64 -d >> /function/function.zip;" % (chunk.decode("utf-8"))
+        for chunk in content_chunks[1:]
+    ]
+
     volumes = [{"name": "function-code", "path": "/function"}]
+
+    zip_steps = [
+        {
+            "name": "ubuntu",
+            "args": ["bash", "-c", cmd],
+            "volumes": volumes,
+        }
+        for cmd in cmds
+    ]
+
     build_step = {
         "name": build_name,
         "action": "gcp-types/cloudbuild-v1:cloudbuild.projects.builds.create",
         "metadata": {"runtimePolicy": ["UPDATE_ON_CHANGE"]},
         "properties": {
-            "steps": [
-                {
-                    "name": "ubuntu",
-                    "args": ["bash", "-c", cmd],
-                    "volumes": volumes,
-                },
+            "steps": zip_steps
+            + [
                 {
                     "name": "gcr.io/cloud-builders/gsutil",
                     "args": ["cp", "/function/function.zip", source_archive_url],
                     "volumes": volumes,
-                },
+                }
             ],
             "timeout": "120s",
         },
