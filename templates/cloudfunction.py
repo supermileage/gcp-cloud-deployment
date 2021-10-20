@@ -136,10 +136,30 @@ def GenerateConfig(ctx):
         cloud_function["properties"]["httpsTrigger"] = {
             "securityLevel": "SECURE_ALWAYS"
         }
-        cloud_function["accessControl"] = {
-          **ctx.properties.get("accessControl", {})
-        }
+        cloud_function["accessControl"] = {**ctx.properties.get("accessControl", {})}
+
     resources = [build_step, cloud_function]
+
+    if "publicAccess" in ctx.properties:
+        # This is a workaround since we can't assign the accessControl for allUsers directly
+        # https://github.com/GoogleCloudPlatform/deploymentmanager-samples/issues/494
+        access_control = {
+            "type": "gcp-types/cloudfunctions-v1:virtual.projects.locations.functions.iamMemberBinding",
+            "name": function_name + "-iam-binding",
+            "properties": {
+                "resource": "/".join(
+                    [
+                        cloud_function["properties"]["parent"],
+                        "functions",
+                        cloud_function["properties"]["function"],
+                    ]
+                ),
+                "role": "roles/cloudfunctions.invoker",
+                "member": "allUsers",
+            },
+        }
+
+        resources.append(access_control)
 
     return {
         "resources": resources,
