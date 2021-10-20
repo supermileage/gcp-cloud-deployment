@@ -41,7 +41,7 @@ def generate_api_key():
 def GenerateConfig(ctx):
     """Generate YAML resource configuration."""
     in_memory_output_file = BytesIO()
-    function_name = ctx.env["deployment"] + "-cf-" + ctx.env["name"]
+    function_name = ctx.env["project_number"] + "-" + ctx.env["name"]
     build_name = "upload-function-code-" + ctx.env["name"]
     zip_file = zipfile.ZipFile(
         in_memory_output_file, mode="w", compression=zipfile.ZIP_DEFLATED
