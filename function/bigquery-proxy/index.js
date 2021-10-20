@@ -12,6 +12,7 @@ const bigQuery = new BigQuery({
  */
 exports.handler = async (req, res) => {
   // TODO check allowlisted IPs as a first-line defense
+  console.log("Request IP is", req.ip);
   if (req.method !== "POST") {
     res.status(403).send({"status": "error"});
   } else {

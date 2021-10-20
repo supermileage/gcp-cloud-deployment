@@ -67,6 +67,7 @@ resources:
       httpsTrigger: true
     accessControl:
       gcpIamPolicy:
-        bindings: roles/cloudfunctions.invoker
-        members:
-          - allUsers
+        bindings:
+          - role: roles/cloudfunctions.invoker
+            members:
+              - allUsers
