@@ -10,6 +10,9 @@ gcloud services enable cloudbuild.googleapis.com
 gcloud services enable cloudfunctions.googleapis.com
 gcloud services enable deploymentmanager.googleapis.com
 
+# Enable Glob imports
+gcloud config set deployment_manager/glob_imports True
+
 # Set the correct IAM permissions
 gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT --member serviceAccount:$ACCOUNT_NUM@cloudservices.gserviceaccount.com --role roles/pubsub.admin
 gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT --member serviceAccount:$ACCOUNT_NUM@cloudservices.gserviceaccount.com --role roles/storage.admin

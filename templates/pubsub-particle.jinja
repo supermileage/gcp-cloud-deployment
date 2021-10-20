@@ -1,0 +1,58 @@
+# Pub/sub template for Particle's service account to publish to.
+{% set TOPIC_NAME = properties['topic'] %}
+{% set PARTICLE_ACL = TOPIC_NAME + "-particle-subscription" %}
+
+resources:
+  # Create Topic
+  - name: {{ TOPIC_NAME }}
+    type: gcp-types/pubsub-v1:projects.topics
+    properties:
+      topic: {{ TOPIC_NAME }}
+  # Add service account
+  - name: {{ PARTICLE_ACL }}
+    type: pubsub.v1.topic
+    properties:
+      topic: {{ TOPIC_NAME }}
+    accessControl:
+      gcpIamPolicy:
+          bindings:
+              - role: {{ properties['subscriptionRole'] }}
+                members:
+                  - {{ properties['subscriptionMember'] }}
+
+outputs:
+  - name: topicName
+    value: $(ref.{{ TOPIC_NAME }}.name)
+{# 
+# Create Subscription
+- name: {{ SUBSCRIPTION_NAME }}
+  type: gcp-types/pubsub-v1:projects.subscriptions
+  properties:
+    subscription: {{ SUBSCRIPTION_NAME }}
+    topic: $(ref.{{ TOPIC_NAME }}.name)
+
+
+
+resources:
+  - name: "mytopic"
+    type: gcp-types/pubsub-v1:projects.topics
+    properties:
+      topic: "mytopic"
+
+  - name: "mytopic-permissions"
+    type: pubsub.v1.topic
+    properties:
+      topic: "mytopic"
+    accessControl:
+      gcpIamPolicy:
+        bindings:
+        - role: roles/pubsub.editor
+          members:
+          - "serviceAccount:xxxx@abc.iam.gserviceaccount.com"
+        - role: roles/pubsub.publisher
+          members:
+          - "serviceAccount:xxxx@abc.iam.gserviceaccount.com"
+    # Do I need this? If I dont have it deploys still seem to work
+    metadata:
+      dependsOn:
+      - "mytopic" #}

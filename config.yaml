@@ -1,15 +1,65 @@
 imports:
-  - path: templates/cloudfunction.py
-    name: cloudfunction.py
-  - path: templates/pubsub.py
-    name: pubsub.py
+  # - path: templates/cloudfunction.py
+  #   name: cloudfunction.py
+  # - path: templates/pubsub.py
+  #   name: pubsub.py
+  # - path: templates/storagebucket.jinja
+  #   name: storage.jinja
+  # # Cloud function code
+  # - path: function/index.js
+  # - path: function/package.json
+  # PubSub
+  - path: templates/pubsub-particle.jinja
+    name: pubsub-particle-template
+  # BigQuery
+  - path: templates/bigquery-telemetry.jinja
+    name: bigquery-telemetry-template
+  # Storage
   - path: templates/storagebucket.jinja
-    name: storage.jinja
-  # Cloud function code
-  - path: function/index.js
-  - path: function/package.json
+    name: storage-template
+  # Functions
+  - name: templates/cloudfunction.py
+    name: function-template
+  - path: function/*
+    name: function-artifacts
+
 
 resources:
+  # Create our BigQuery telemetry table
+  - name: bigquery-telemetry-table
+    type: bigquery-telemetry-template
+    properties:
+      datasetName: telemetry_dataset
+      tableName: telemetry_table
+      region: US
+  # Instantiate the topic and add a service account to it
+  - name: particle-pubsub
+    type: pubsub-particle-template
+    properties:
+      topic: particle-endpoint
+      subscriptionRole: roles/pubsub.publisher
+      subscriptionMember: serviceAccount:particle-public@particle-public.iam.gserviceaccount.com
+  # Set up our storage bucket to upload function code to
+  - name: code-storage
+    type: storage-template
+    properties:
+      region: US
+      storageClass: STANDARD
+  # Particle to BigQuery function (WIP, TODO)
+  - name: particle-to-bigquery-function
+    type: function-template
+    properties:
+      codeBucket: $(ref.code-storage.storageBucket)
+      location: us-central1
+      timeout: 60s
+      runtime: nodejs8
+      availableMemoryMb: 256
+      entryPoint: handler
+      eventTrigger:
+        resource: $(ref.particle-pubsub.topicName)
+  # # asdf
+  # - name: bigquery-proxy-function
+    
 # # Pub sub resource for our Particle board
 # - name: particle-pubsub
 #   type: pubsub.py
@@ -40,33 +90,3 @@ resources:
 #     eventTrigger:
 #       resource: $(ref.particle-pubsub.topicName)
 #       eventType: providers/cloud.pubsub/eventTypes/topic.publish
-  
-- name: test_dataset
-  type: gcp-types/bigquery-v2:datasets
-  properties:
-    datasetReference:
-      datasetId: test_dataset
-      description: Test table.
-      location: US
-
-# Employee Table
-- name: test_table
-  type: gcp-types/bigquery-v2:tables
-  properties:
-    datasetId: $(ref.test_table.datasetReference.datasetId)
-    tableReference:
-      tableId: test_table
-    schema:
-          fields:
-          - name: emp_id
-            type: string
-            mode: REQUIRED
-          - name: emp_name
-            type: string
-            mode: REQUIRED
-          - name: emp_type
-            type: string
-            mode: REQUIRED
-          - name: depart_name
-            type: string
-            mode: REQUIRED

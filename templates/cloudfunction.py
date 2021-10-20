@@ -50,7 +50,7 @@ def GenerateConfig(ctx):
   content = base64.b64encode(in_memory_output_file.getvalue())
   m = hashlib.md5()
   m.update(content)
-  bucket = ctx.properties['codeBucket'] + ctx.env['deployment'] + ctx.env['project_number']
+  bucket = ctx.properties['codeBucket']
   source_archive_url = 'gs://%s/%s' % (bucket,
                                        m.hexdigest() + '.zip')
   cmd = "echo '%s' | base64 -d > /function/function.zip;" % (content)
