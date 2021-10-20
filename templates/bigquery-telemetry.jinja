@@ -37,3 +37,9 @@ resources:
           - name: published_at
             type: datetime
             mode: REQUIRED
+
+outputs:
+- name: datasetName
+  value: {{ DATASET_NAME }}
+- name: tableName
+  value: {{ TABLE_NAME }}
