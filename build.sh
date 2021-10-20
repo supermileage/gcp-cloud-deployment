@@ -16,6 +16,7 @@ gcloud config set deployment_manager/glob_imports True
 # Set the correct IAM permissions
 gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT --member serviceAccount:$ACCOUNT_NUM@cloudservices.gserviceaccount.com --role roles/pubsub.admin
 gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT --member serviceAccount:$ACCOUNT_NUM@cloudservices.gserviceaccount.com --role roles/storage.admin
+gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT --member serviceAccount:$ACCOUNT_NUM@cloudservices.gserviceaccount.com --role roles/cloudfunctions.admin
 
 # Deploy the configuration
 gcloud deployment-manager deployments create $GOOGLE_CLOUD_PROJECT-deploy --config config.yaml
