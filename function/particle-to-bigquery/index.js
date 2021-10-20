@@ -1,10 +1,6 @@
 const { BigQuery } = require("@google-cloud/bigquery");
 
-// const datastore = Datastore({
-//   projectId: process.env.projectId
-// });
-
-const bigQuery = BigQuery({
+const bigQuery = new BigQuery({
   projectId: process.env.projectId,
 });
 

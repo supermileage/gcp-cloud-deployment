@@ -47,6 +47,9 @@ resources:
       runtime: nodejs14
       availableMemoryMb: 256
       entryPoint: handler
+      environmentVariables:
+        datasetName: $(ref.bigquery-telemetry-table.datasetName)
+        tableName: $(ref.bigquery-telemetry-table.tableName)
       eventTrigger:
         resource: $(ref.particle-pubsub.topicName)
         eventType: providers/cloud.pubsub/eventTypes/topic.publish
