@@ -170,6 +170,7 @@ def GenerateConfig(ctx):
                 "role": "roles/cloudfunctions.invoker",
                 "member": "allUsers",
             },
+            "metadata": {"dependsOn": [function_name]},
         }
 
         resources.append(access_control)
