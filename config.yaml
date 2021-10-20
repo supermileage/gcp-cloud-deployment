@@ -48,6 +48,7 @@ resources:
   - name: particle-to-bigquery-function
     type: function-template.py
     properties:
+      codeLocation: function/
       codeBucket: $(ref.code-storage.storageBucket)
       location: us-central1
       timeout: 60s
