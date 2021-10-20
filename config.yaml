@@ -11,7 +11,7 @@ imports:
   # Functions
   - path: templates/cloudfunction.py
     name: function-template.py
-  - path: function/*
+  - path: function/*/*
 
 
 resources:
