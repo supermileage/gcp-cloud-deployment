@@ -66,3 +66,6 @@ resources:
       entryPoint: handler
       httpsTrigger: true
       publicAccess: true
+      # Inject a randomly generated API key on build
+      # This is a workaround to rotating credentials for Grafana
+      injectApiKey: true

@@ -12,12 +12,21 @@ const bigQuery = new BigQuery({
  */
 exports.handler = async (req, res) => {
   // TODO check allowlisted IPs as a first-line defense
-  console.log("Request IP is", req.ip);
   if (req.method !== "POST") {
-    res.status(403).send({"status": "error"});
+    res.status(403).send({ status: "error" });
   } else {
     if (req.get("content-type") !== "application/json") {
-      return res.status(403).send({"status": "invalid content-type, json is required."});
+      return res
+        .status(403)
+        .send({ status: "Invalid content-type, JSON is required." });
+    }
+    if (req.get("x-api-key") !== (process.env.apiKey || "")) {
+      return res
+        .status(403)
+        .send({
+          status:
+            "Invalid API key, retrieve this from the Cloud Function dashboard.",
+        });
     }
     const options = req.body;
     const [job] = await bigQuery.createQueryJob(options);

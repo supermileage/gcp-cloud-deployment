@@ -31,6 +31,11 @@ import base64
 import hashlib
 from io import BytesIO
 import zipfile
+import uuid
+
+
+def generate_api_key():
+    return uuid.uuid4().hex
 
 
 def GenerateConfig(ctx):
@@ -96,6 +101,7 @@ def GenerateConfig(ctx):
             "timeout": "120s",
         },
     }
+
     cloud_function = {
         "type": "gcp-types/cloudfunctions-v1:projects.locations.functions",
         "name": function_name,
@@ -127,11 +133,18 @@ def GenerateConfig(ctx):
         },
         "metadata": {"dependsOn": [build_name]},
     }
+
+    if "injectApiKey" in ctx.properties:
+        cloud_function["properties"]["environmentVariables"][
+            "apiKey"
+        ] = generate_api_key()
+
     if "eventTrigger" in ctx.properties:
         cloud_function["properties"]["eventTrigger"] = {
             "resource": ctx.properties["eventTrigger"]["resource"],
             "eventType": ctx.properties["eventTrigger"]["eventType"],
         }
+
     if "httpsTrigger" in ctx.properties:
         cloud_function["properties"]["httpsTrigger"] = {
             "securityLevel": "SECURE_ALWAYS"
