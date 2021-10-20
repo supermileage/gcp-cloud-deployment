@@ -18,7 +18,7 @@ imports:
   - path: templates/storagebucket.jinja
     name: storage-template
   # Functions
-  - name: templates/cloudfunction.py
+  - path: templates/cloudfunction.py
     name: function-template
   - path: function/*
     name: function-artifacts
