@@ -37,6 +37,7 @@ def GenerateConfig(ctx):
     """Generate YAML resource configuration."""
     in_memory_output_file = BytesIO()
     function_name = ctx.env["deployment"] + "-cf-" + ctx.env["name"]
+    build_name = "upload-function-code-" + ctx.env["name"]
     zip_file = zipfile.ZipFile(
         in_memory_output_file, mode="w", compression=zipfile.ZIP_DEFLATED
     )
@@ -56,7 +57,7 @@ def GenerateConfig(ctx):
     cmd = "echo '%s' | base64 -d > /function/function.zip;" % (content.decode("utf-8"))
     volumes = [{"name": "function-code", "path": "/function"}]
     build_step = {
-        "name": "upload-function-code-" + ctx.env["name"],
+        "name": build_name,
         "action": "gcp-types/cloudbuild-v1:cloudbuild.projects.builds.create",
         "metadata": {"runtimePolicy": ["UPDATE_ON_CHANGE"]},
         "properties": {
@@ -103,7 +104,7 @@ def GenerateConfig(ctx):
             "availableMemoryMb": ctx.properties["availableMemoryMb"],
             "runtime": ctx.properties["runtime"],
         },
-        "metadata": {"dependsOn": ["upload-function-code"]},
+        "metadata": {"dependsOn": [build_name]},
     }
     if "eventTrigger" in ctx.properties:
         cloud_function["properties"]["eventTrigger"] = {
