@@ -98,7 +98,7 @@ def GenerateConfig(ctx):
             "environmentVariables": {
                 "codeHash": m.hexdigest(),
                 "projectId": ctx.env["project"],
-                **ctx.properties["environmentVariables"],
+                **ctx.properties.get("environmentVariables", {}),
             },
             "entryPoint": ctx.properties["entryPoint"],
             "timeout": ctx.properties["timeout"],
