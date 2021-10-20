@@ -10,44 +10,43 @@ imports:
   # - path: function/package.json
   # PubSub
   - path: templates/pubsub-particle.jinja
-    name: pubsub-particle-template
+    name: pubsub-particle-template.jinja
   # BigQuery
   - path: templates/bigquery-telemetry.jinja
-    name: bigquery-telemetry-template
+    name: bigquery-telemetry-template.jinja
   # Storage
   - path: templates/storagebucket.jinja
-    name: storage-template
+    name: storage-template.jinja
   # Functions
   - path: templates/cloudfunction.py
-    name: function-template
+    name: function-template.py
   - path: function/*
-    name: function-artifacts
 
 
 resources:
   # Create our BigQuery telemetry table
   - name: bigquery-telemetry-table
-    type: bigquery-telemetry-template
+    type: bigquery-telemetry-template.jinja
     properties:
       datasetName: telemetry_dataset
       tableName: telemetry_table
       region: US
   # Instantiate the topic and add a service account to it
   - name: particle-pubsub
-    type: pubsub-particle-template
+    type: pubsub-particle-template.jinja
     properties:
       topic: particle-endpoint
       subscriptionRole: roles/pubsub.publisher
       subscriptionMember: serviceAccount:particle-public@particle-public.iam.gserviceaccount.com
   # Set up our storage bucket to upload function code to
   - name: code-storage
-    type: storage-template
+    type: storage-template.jinja
     properties:
       region: US
       storageClass: STANDARD
   # Particle to BigQuery function (WIP, TODO)
   - name: particle-to-bigquery-function
-    type: function-template
+    type: function-template.py
     properties:
       codeBucket: $(ref.code-storage.storageBucket)
       location: us-central1
