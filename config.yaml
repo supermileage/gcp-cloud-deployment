@@ -57,6 +57,7 @@ resources:
       entryPoint: handler
       eventTrigger:
         resource: $(ref.particle-pubsub.topicName)
+        eventType: providers/cloud.pubsub/eventTypes/topic.publish
   # # asdf
   # - name: bigquery-proxy-function
     
