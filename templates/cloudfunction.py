@@ -136,6 +136,9 @@ def GenerateConfig(ctx):
         cloud_function["properties"]["httpsTrigger"] = {
             "securityLevel": "SECURE_ALWAYS"
         }
+        cloud_function["accessControl"] = {
+          **ctx.properties.get("accessControl", {})
+        }
     resources = [build_step, cloud_function]
 
     return {

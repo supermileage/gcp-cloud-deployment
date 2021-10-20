@@ -65,9 +65,10 @@ resources:
       availableMemoryMb: 256
       entryPoint: handler
       httpsTrigger: true
-    accessControl:
-      gcpIamPolicy:
-        bindings:
-          - role: roles/cloudfunctions.invoker
-            members:
-              - allUsers
+      # Put ACL in properties in order to propagate this forward in the template
+      accessControl:
+        gcpIamPolicy:
+          bindings:
+            - role: roles/cloudfunctions.invoker
+              members:
+                - allUsers
