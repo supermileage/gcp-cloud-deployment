@@ -42,7 +42,7 @@ resources:
   - name: code-storage
     type: storage-template.jinja
     properties:
-      bucketName: code-storage
+      bucketBase: code-storage
       region: US
       storageClass: STANDARD
   # Particle to BigQuery function (WIP, TODO)
@@ -50,7 +50,7 @@ resources:
     type: function-template.py
     properties:
       codeLocation: function/
-      codeBucket: code-storage
+      bucketBase: code-storage
       location: us-central1
       timeout: 60s
       runtime: nodejs8
