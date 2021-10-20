@@ -1,7 +1,7 @@
 {% set NAME = env['name'] + env['deployment'] + env['project_number'] %}
 
 resources:
-- name: {{ NAME }}
+- name: {{ properties['bucketName'] }}
   type: storage.v1.bucket
   properties:
     location: {{ properties['region'] }}
@@ -12,4 +12,4 @@ resources:
 
 outputs:
   - name: storageBucket
-    value: $(ref.{{ NAME }}.name)
+    value: $(ref.{{ properties['bucketName'] }}.name)
