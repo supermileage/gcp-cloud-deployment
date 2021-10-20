@@ -10,33 +10,63 @@ imports:
   - path: function/package.json
 
 resources:
-# Pub sub resource for our Particle board
-- name: particle-pubsub
-  type: pubsub.py
+# # Pub sub resource for our Particle board
+# - name: particle-pubsub
+#   type: pubsub.py
+#   properties:
+#     topic: particle-endpoint
+#     accessControl:
+#       - role: roles/pubsub.publisher
+#         members:
+#           - serviceAccount:particle-public@particle-public.iam.gserviceaccount.com
+# # Storage bucket for our cloud function
+# - name: code-storage
+#   type: storage.jinja
+#   properties:
+#     region: us
+#     storageClass: STANDARD
+# # Cloud function that publishes our content
+# - name: particle-cf-publish
+#   type: cloudfunction.py
+#   properties:
+#     codeLocation: function/
+#     codeBucket: code-storage
+#     codeBucketObject: function.zip
+#     location: us-central1
+#     timeout: 60s
+#     runtime: nodejs8
+#     availableMemoryMb: 256
+#     entryPoint: handler
+#     eventTrigger:
+#       resource: $(ref.particle-pubsub.topicName)
+#       eventType: providers/cloud.pubsub/eventTypes/topic.publish
+  
+- name: test_dataset
+  type: gcp-types/bigquery-v2:datasets
   properties:
-    topic: particle-endpoint
-    accessControl:
-      - role: roles/pubsub.publisher
-        members:
-          - serviceAccount:particle-public@particle-public.iam.gserviceaccount.com
-# Storage bucket for our cloud function
-- name: code-storage
-  type: storage.jinja
+    datasetReference:
+      datasetId: test_dataset
+      description: Test table.
+      location: US
+
+# Employee Table
+- name: test_table
+  type: gcp-types/bigquery-v2:tables
   properties:
-    region: us
-    storageClass: STANDARD
-# Cloud function that publishes our content
-- name: particle-cf-publish
-  type: cloudfunction.py
-  properties:
-    codeLocation: function/
-    codeBucket: code-storage
-    codeBucketObject: function.zip
-    location: us-central1
-    timeout: 60s
-    runtime: nodejs8
-    availableMemoryMb: 256
-    entryPoint: handler
-    eventTrigger:
-      resource: $(ref.particle-pubsub.topicName)
-      eventType: providers/cloud.pubsub/eventTypes/topic.publish
+    datasetId: $(ref.test_table.datasetReference.datasetId)
+    tableReference:
+      tableId: test_table
+    schema:
+          fields:
+          - name: emp_id
+            type: string
+            mode: REQUIRED
+          - name: emp_name
+            type: string
+            mode: REQUIRED
+          - name: emp_type
+            type: string
+            mode: REQUIRED
+          - name: depart_name
+            type: string
+            mode: REQUIRED
