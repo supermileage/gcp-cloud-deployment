@@ -15,10 +15,10 @@ resources:
       topic: {{ TOPIC_NAME }}
     accessControl:
       gcpIamPolicy:
-          bindings:
-              - role: {{ properties['subscriptionRole'] }}
-                members:
-                  - {{ properties['subscriptionMember'] }}
+        bindings:
+          - role: {{ properties['subscriptionRole'] }}
+            members:
+              - {{ properties['subscriptionMember'] }}
 
 outputs:
   - name: topicName

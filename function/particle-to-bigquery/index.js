@@ -17,11 +17,14 @@ exports.handler = (pubSubEvent, context) => {
   console.log(context);
   const json = JSON.parse(Buffer.from(pubSubEvent.data, "base64").toString());
   const items = json.d.map((e) => ({
-    device_id: pubSubEvent.attributes.device_id,
     event: e.t,
     data: isNaN(e.d) ? e.d : Number(e.d).toString(),
-    published_at: pubSubEvent.attributes.published_at,
-    recorded_at: new Date(parseInt(json.time * 1000)).toISOString(),
+    published_at: bigQuery.datetime(
+      new Date(pubSubEvent.attributes.published_at).toISOString()
+    ),
+    recorded_at: bigQuery.datetime(
+      new Date(parseInt(json.time * 1000)).toISOString()
+    ),
   }));
   bigQuery
     .dataset(process.env.datasetName)
