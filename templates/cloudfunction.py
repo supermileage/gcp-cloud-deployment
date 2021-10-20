@@ -44,7 +44,7 @@ def GenerateConfig(ctx):
       zip_file.writestr(imp[len(ctx.properties['codeLocation']):],
                         ctx.imports[imp])
   zip_file.close()
-  content = base64.b64encode(in_memory_output_file.getvalue())
+  content = base64.b64encode(in_memory_output_file.getvalue()).decode("utf-8")
   m = hashlib.md5()
   m.update(content)
   bucket = ctx.properties['codeBucket']
