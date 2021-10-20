@@ -2,7 +2,7 @@
 
 # Region, is configurable
 REGION=us-central
-ACCOUNT_NUM=$(gcloud projects list | grep $GOOGLE_CLOUD_PROJECT | tr -s " " | cut -d' ' -f3)
+ACCOUNT_NUM=$(gcloud projects list --filter="projectId:$GOOGLE_CLOUD_PROJECT" | grep PROJECT_NUMBER | cut -d' ' -f2)
 
 # Enable the APIs
 gcloud services enable pubsub.googleapis.com
@@ -19,8 +19,3 @@ gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT --member serviceAcc
 
 # Deploy the configuration
 gcloud deployment-manager deployments create $GOOGLE_CLOUD_PROJECT-deploy --config config.yaml
-
-# Create app to build datastore
-gcloud app create --region=$REGION
-# Set up datastore indices
-gcloud datastore indexes create datastore/index.yaml
