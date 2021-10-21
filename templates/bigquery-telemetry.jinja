@@ -1,0 +1,45 @@
+# This deployment template is specifically for Supermileage's telemetry data
+# and its accompanying schema. Thus, it isn't generalized and shouldn't be
+# treated as such.
+# Note that - is not a valid character.
+{% set DATASET_NAME = properties['datasetName'] %}
+{% set TABLE_NAME = properties['tableName'] %}
+
+
+resources:
+# Dataset Resource
+- name: {{ DATASET_NAME }}
+  type: gcp-types/bigquery-v2:datasets
+  properties:
+    datasetReference:
+      datasetId: {{ DATASET_NAME }}
+      description: The {{ DATASET_NAME }} dataset contains our generalized telemetry tables.
+      location: {{ properties['region'] }}
+
+# Data Table
+- name: {{ TABLE_NAME }}
+  type: gcp-types/bigquery-v2:tables
+  properties:
+    datasetId: $(ref.{{ DATASET_NAME }}.datasetReference.datasetId)
+    tableReference:
+      tableId: {{ TABLE_NAME }}
+    schema:
+          fields:
+          - name: event
+            type: string
+            mode: REQUIRED
+          - name: data
+            type: string
+            mode: REQUIRED
+          - name: recorded_at
+            type: datetime
+            mode: REQUIRED
+          - name: published_at
+            type: datetime
+            mode: REQUIRED
+
+outputs:
+- name: datasetName
+  value: {{ DATASET_NAME }}
+- name: tableName
+  value: {{ TABLE_NAME }}

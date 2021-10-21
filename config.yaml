@@ -1,42 +1,71 @@
 imports:
-  - path: templates/cloudfunction.py
-    name: cloudfunction.py
-  - path: templates/pubsub.py
-    name: pubsub.py
+  # PubSub
+  - path: templates/pubsub-particle.jinja
+    name: pubsub-particle-template.jinja
+  # BigQuery
+  - path: templates/bigquery-telemetry.jinja
+    name: bigquery-telemetry-template.jinja
+  # Storage
   - path: templates/storagebucket.jinja
-    name: storage.jinja
-  # Cloud function code
-  - path: function/index.js
-  - path: function/package.json
+    name: storage-template.jinja
+  # Functions
+  - path: templates/cloudfunction.py
+    name: function-template.py
+  - path: function/*/*
+
 
 resources:
-# Pub sub resource for our Particle board
-- name: particle-pubsub
-  type: pubsub.py
-  properties:
-    topic: particle-endpoint
-    accessControl:
-      - role: roles/pubsub.publisher
-        members:
-          - serviceAccount:particle-public@particle-public.iam.gserviceaccount.com
-# Storage bucket for our cloud function
-- name: code-storage
-  type: storage.jinja
-  properties:
-    region: us
-    storageClass: STANDARD
-# Cloud function that publishes our content
-- name: particle-cf-publish
-  type: cloudfunction.py
-  properties:
-    codeLocation: function/
-    codeBucket: code-storage
-    codeBucketObject: function.zip
-    location: us-central1
-    timeout: 60s
-    runtime: nodejs8
-    availableMemoryMb: 256
-    entryPoint: handler
-    eventTrigger:
-      resource: $(ref.particle-pubsub.topicName)
-      eventType: providers/cloud.pubsub/eventTypes/topic.publish
+  # Create our BigQuery telemetry table
+  - name: bigquery-telemetry-table
+    type: bigquery-telemetry-template.jinja
+    properties:
+      datasetName: telemetry_dataset
+      tableName: telemetry_table
+      region: US
+  # Instantiate the topic and add a service account to it
+  - name: particle-pubsub
+    type: pubsub-particle-template.jinja
+    properties:
+      topic: particle-endpoint
+      subscriptionRole: roles/pubsub.publisher
+      subscriptionMember: serviceAccount:particle-public@particle-public.iam.gserviceaccount.com
+  # Set up our storage bucket to upload function code to
+  - name: code-storage
+    type: storage-template.jinja
+    properties:
+      bucketBase: code-storage
+      region: US
+      storageClass: STANDARD
+  # Particle to BigQuery function (WIP, TODO)
+  - name: particle-to-bigquery-function
+    type: function-template.py
+    properties:
+      codeLocation: function/particle-to-bigquery/
+      bucketBase: code-storage
+      location: us-central1
+      timeout: 60s
+      runtime: nodejs14
+      availableMemoryMb: 256
+      entryPoint: handler
+      environmentVariables:
+        datasetName: $(ref.bigquery-telemetry-table.datasetName)
+        tableName: $(ref.bigquery-telemetry-table.tableName)
+      eventTrigger:
+        resource: $(ref.particle-pubsub.topicName)
+        eventType: providers/cloud.pubsub/eventTypes/topic.publish
+  # # BigQuery proxy
+  - name: bigquery-proxy-function
+    type: function-template.py
+    properties:
+      codeLocation: function/bigquery-proxy/
+      bucketBase: code-storage
+      location: us-central1
+      timeout: 60s
+      runtime: nodejs14
+      availableMemoryMb: 256
+      entryPoint: handler
+      httpsTrigger: true
+      publicAccess: true
+      # Inject a randomly generated API key on build
+      # This is a workaround to rotating credentials for Grafana
+      injectApiKey: true
