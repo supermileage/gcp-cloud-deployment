@@ -23,7 +23,7 @@ exports.handler = (pubSubEvent, context) => {
           event: dataObject.t,
           data: dataObject.d,
           published_at: bigQuery.datetime(new Date(pubSubEvent.attributes.published_at).toISOString()),
-          recorded_at: bigQuery.datetime(new Date(object.t * 1000).toISOString())
+          recorded_at: bigQuery.datetime(new Date(parseInt(object.t.toString()) * 1000).toISOString())
       });
     }
   }
