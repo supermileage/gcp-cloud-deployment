@@ -15,17 +15,18 @@ const bigQuery = new BigQuery({
 exports.handler = (pubSubEvent, context) => {
   console.log(pubSubEvent);
   console.log(context);
-  const json = JSON.parse(Buffer.from(pubSubEvent.data, "base64").toString());
-  const items = json.d.map((e) => ({
-    event: e.t,
-    data: isNaN(e.d) ? e.d : Number(e.d).toString(),
-    published_at: bigQuery.datetime(
-      new Date(pubSubEvent.attributes.published_at).toISOString()
-    ),
-    recorded_at: bigQuery.datetime(
-      new Date(parseInt(json.time * 1000)).toISOString()
-    ),
-  }));
+  const dataArray = JSON.parse(Buffer.from(pubSubEvent.data, "base64").toString()).l;
+  const items = new Array();
+  for (const object in dataArray) {
+    for (const dataObject  in object) {
+      items.push({
+          event: dataObject.t,
+          data: dataObject.d,
+          published_at: bigQuery.datetime(new Date(pubSubEvent.attributes.published_at).toISOString()),
+          recorded_at: bigQuery.datetime(new Date(parseInt(object.t * 1000)).toISOString())
+      });
+    }
+  }
   bigQuery
     .dataset(process.env.datasetName)
     .table(process.env.tableName)
