@@ -18,6 +18,7 @@ exports.handler = (pubSubEvent, context) => {
   const dataArray = JSON.parse(Buffer.from(pubSubEvent.data, "base64").toString()).l;
   const items = new Array();
   for (const object in dataArray) {
+    console.log(object.t * 1000);
     const innerObject = object.d;
     Object.keys(innerObject).foreach(function(key) { 
       items.push({
