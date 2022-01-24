@@ -18,14 +18,13 @@ exports.handler = (pubSubEvent, context) => {
   const dataArray = JSON.parse(Buffer.from(pubSubEvent.data, "base64").toString()).l;
   const items = new Array();
   for (const object in dataArray) {
-    console.log(object.t * 1000);
-    const innerObject = object.d;
-    Object.keys(innerObject).foreach(function(key) { 
+    const innerObject = Object(object.d);
+    Object.keys(innerObject).forEach(function(key) { 
       items.push({
         event: key,
         data: innerObject[key],
         published_at: bigQuery.datetime(new Date(pubSubEvent.attributes.published_at).toISOString()),
-        recorded_at: bigQuery.datetime(new Date(object.t * 1000).toISOString())
+        recorded_at: bigQuery.datetime(new Date(Number(object.t) * 1000).toISOString())
       });
     })
   }
