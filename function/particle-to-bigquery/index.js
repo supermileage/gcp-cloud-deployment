@@ -15,16 +15,19 @@ const bigQuery = new BigQuery({
 exports.handler = (pubSubEvent, context) => {
   console.log(pubSubEvent);
   console.log(context);
-  const dataArray = JSON.parse(Buffer.from(pubSubEvent.data, "base64").toString()).l;
+  const data = JSON.parse(Buffer.from(pubSubEvent.data, "base64").toString());
+  const dataArray = data.l;
   const items = new Array();
-  for (const object in dataArray) {
-    const innerObject = Object(object.d);
+  for (const i in dataArray) {
+    const object = dataArray[i];
+    const innerObject = object.d;
     Object.keys(innerObject).forEach(function(key) { 
       items.push({
+        vehicle: data.v,
         event: key,
         data: innerObject[key],
         published_at: bigQuery.datetime(new Date(pubSubEvent.attributes.published_at).toISOString()),
-        recorded_at: bigQuery.datetime(new Date(Number(object.t) * 1000).toISOString())
+        recorded_at: bigQuery.datetime(new Date(object.t * 1000).toISOString())
       });
     })
   }
