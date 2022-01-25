@@ -70,25 +70,32 @@ You'll have to manually delete what's in the bucket first, but then simply run `
 
 ## Addendum
 
-The cloud function will expect the data that comes from the particle to be a JSON string with a `time` field and `d` (data) array of objects with `t` (event type) and `d` (data) as fields.
+The cloud function will expect the data that comes from the particle to be a JSON string with a vehicle (`v`) field and `l` (list) array of objects with `t` (epoch time in seconds) and `d` (Json object)  
 
 So for example, one push may look like:
 ```json
 {
-    "time" : 1583051693,
-    "d" : [
-        {
-            "t" : "PROTO-SPARK",
-            "d" : 14.5
-        },
-        {
-            "t" : "PROTO-RPM",
-            "d" : 2343
-        },
-        {
-            "t" : "PROTO-Location",
-            "d" : "$GPRMC,123519,A,4807.038,N,01131.000,E,022.4,084.4,230394,003.1,W*6A"
-        }
-    ]
+	“v”:”vehicleName”,
+	
+	“l”: [
+		
+		0: {
+			
+			“t”: 1643078601,
+			
+			“d”: { “key1”: “value1”, “key2”: ”value2” }
+		
+		},
+		
+		1: {
+			
+			“t”: 1643078603,
+			
+			“d”: { “key3”: “value3”, “key4”: ”value4” }
+		
+		}
+	
+	]
+
 }
 ```
