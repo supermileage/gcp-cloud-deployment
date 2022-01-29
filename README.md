@@ -89,7 +89,8 @@ So for example, one push may look like:
 			“t”: 1643078603,
 			“d”: {
 			“floatKey”: “33.333”,
-			“boolKey”: 1, ...
+			“boolKey”: 1,
+			...
 			}
 		},
 		...
