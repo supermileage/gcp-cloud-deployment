@@ -93,8 +93,9 @@ So for example, one push may look like:
 			
 			“d”: { “key3”: “value3”, “key4”: ”value4” }
 		
-		}
-	
+		},
+		
+		...
 	]
 
 }
