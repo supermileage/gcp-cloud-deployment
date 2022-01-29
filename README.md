@@ -73,7 +73,7 @@ You'll have to manually delete what's in the bucket first, but then simply run `
 The cloud function will expect the data that comes from the particle to be a JSON string with a vehicle (`v`) field and `l` (list) array of objects with `t` (epoch time in seconds) and `d` (Json object)  
 
 So for example, one push may look like:
-```json
+```yaml
 {
 	“v”:”vehicleName”,
 	
