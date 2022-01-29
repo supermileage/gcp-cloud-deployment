@@ -79,7 +79,7 @@ So for example, one push may look like:
 	
 	“l”: [
 		
-		0: {
+		{
 			
 			“t”: 1643078601,
 			
@@ -87,7 +87,7 @@ So for example, one push may look like:
 		
 		},
 		
-		1: {
+		{
 			
 			“t”: 1643078603,
 			
