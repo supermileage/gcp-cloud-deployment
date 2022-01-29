@@ -83,7 +83,7 @@ So for example, one push may look like:
 			
 			“t”: 1643078601,
 			
-			“d”: { “key1”: “value1”, “key2”: ”value2” }
+			“d”: { “intKey”: 25, “stringKey”: ”stringVal”, ... }
 		
 		},
 		
@@ -91,10 +91,10 @@ So for example, one push may look like:
 			
 			“t”: 1643078603,
 			
-			“d”: { “key3”: “value3”, “key4”: ”value4” }
+			“d”: { “floatKey”: “33.333”, “boolKey”: 1, ... }
 		
 		},
-		
+
 		...
 	]
 
