@@ -79,11 +79,18 @@ So for example, one push may look like:
 	“l”: [
 		{	
 			“t”: 1643078601,
-			“d”: { “intKey”: 25, “stringKey”: ”stringVal”, ... }
+			“d”: {
+			“intKey”: 25,
+			“stringKey”: ”stringVal”,
+			...
+			}
 		},
 		{
 			“t”: 1643078603,
-			“d”: { “floatKey”: “33.333”, “boolKey”: 1, ... }
+			“d”: {
+			“floatKey”: “33.333”,
+			“boolKey”: 1, ...
+			}
 		},
 		...
 	]
